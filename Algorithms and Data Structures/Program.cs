@@ -13,14 +13,12 @@ namespace AlgorithmsAndDataStructures
             int StartMax = 0;
             int EndMax = 0;
             int tempStart = 0;
-
             for (int i = 0; i < a.Length; i++)
             {
                 if (sum+a[i] < a[i])
                 {
                     sum=a[i];
                     tempStart = i;
-                    
                 }
                 else
                 {
@@ -40,15 +38,15 @@ namespace AlgorithmsAndDataStructures
         //Question 2:
         public class FastAllMap
         {
-            private struct Cell
+            class Cell
             {
                 public int Value;
                 public long TimesCounter;
             }
-            private readonly Dictionary<int, Cell> data = new Dictionary<int, Cell>();
-            private long currentCounter = 0;     
-            private int globalValue = 0;     
-            private long globalCounter = -1;  
+            Dictionary<int, Cell> data = new Dictionary<int, Cell>();
+            long currentCounter = 0;     
+            int globalValue = 0;     
+            long globalCounter = -1;  
 
             public void Set(int key, int val)
             {
@@ -85,56 +83,53 @@ namespace AlgorithmsAndDataStructures
         //Question 3:
         static int NotDownList(ListNode n)
         {
-            if(n==null)
-                return 0;
-            List<int> temp1 = new List<int>();
-            ListNode temp2 = n;
-            while (temp2 != null)
+            if (n == null) return 0;
+            List<int> nums = new List<int>();
+            ListNode temp = n;
+            while (temp != null)
             {
-                temp1.Add(temp2.val);
-                temp2 = temp2.next;
+                nums.Add(temp.val);
+                temp = temp.next;
             }
-            int length = temp1.Count;
-            int[] MaxSet = new int[length];
-            int maxSubsequenceLen = 0;
-            for (int i = 0; i < length; i++)
+            List<int> tails = new List<int>();
+            foreach (int x in nums)
             {
-                MaxSet[i] = 1;
-                for(int j = 0; j < i; j++)
+                int left = 0, right = tails.Count;
+                while (left < right)
                 {
-                    if (temp1[j] <= temp1[i])
-                    {
-                        MaxSet[i] = Math.Max(MaxSet[i], MaxSet[j]+1);
-                    }
+                    int mid = left + (right - left) / 2;
+                    if (tails[mid] <= x)
+                        left = mid + 1;
+                    else
+                        right = mid;
                 }
-                maxSubsequenceLen=Math.Max(maxSubsequenceLen, MaxSet[i]);
+                if (left == tails.Count)
+                    tails.Add(x); 
+                else
+                    tails[left] = x; 
             }
-            return length - maxSubsequenceLen;
+            return nums.Count - tails.Count;
         }
+       
         //Question 4:
         public int CountSubarraysWithSumX(int[] nums, int x)
         {
             int count = 0;
             int currentSum = 0;
-            Dictionary<int, int> prefixSumCounts = new Dictionary<int, int>();
-
-            prefixSumCounts[0] = 1;
-
+            Dictionary<int, int> SumCounts = new Dictionary<int, int>();
+            SumCounts[0] = 1;
             foreach (int num in nums)
             {
                 currentSum += num;
-                
-                if (prefixSumCounts.ContainsKey(currentSum - x))
+                if (SumCounts.ContainsKey(currentSum - x))
                 {
-                    count += prefixSumCounts[currentSum - x];
+                    count += SumCounts[currentSum - x];
                 }
-                
-                if (prefixSumCounts.ContainsKey(currentSum))
-                    prefixSumCounts[currentSum]++;
+                if (SumCounts.ContainsKey(currentSum))
+                    SumCounts[currentSum]++;
                 else
-                    prefixSumCounts[currentSum] = 1;
+                    SumCounts[currentSum] = 1;
             }
-
             return count;
         }
 
@@ -145,9 +140,6 @@ namespace AlgorithmsAndDataStructures
             int Toys = N - S;
             return Math.Max(Stickers, Toys) + 1;
         }
-
-       
-
     }
 }
 
